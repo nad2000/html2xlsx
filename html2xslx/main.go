@@ -15,15 +15,15 @@ func main() {
 		log.Infoln("USAGE: " + os.Args[0] + " <INPUT FILENAME> [<OUTPUT FILENAME>]")
 		os.Exit(-1)
 	}
-	fileName := os.Args[1]
+	filename := os.Args[1]
 	var outputFilename string
 	if len(os.Args) > 2 {
 		outputFilename = os.Args[2]
 	} else {
-		dir, fn := filepath.Split(fileName)
+		dir, fn := filepath.Split(filename)
 		ext := filepath.Ext(fn)
 		outputFilename = filepath.Join(dir,
 			strings.TrimSuffix(fn, ext)+"_OUTPUT"+ext)
 	}
-	html2xlsx.Convert(fileName, outputFilename)
+	html2xlsx.Convert(filename, outputFilename)
 }

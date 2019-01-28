@@ -10,6 +10,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:4b94878e125f31ec67c892ecfe38c13211da40653281588598218f807ae72bf7"
+  name = "github.com/nad2000/excelize"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "eb62256d165607c6877ce88efbba10c119137b3d"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -18,12 +26,31 @@
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:e60f2f1cd2e8dfdea48c2440c303d103266e754ab1d8b75796a4e4caddb7a68c"
+  name = "github.com/tealeg/xlsx"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8be35264fa75a1bbe954ce51eba04f273e2c59e5"
+  version = "v1.0.3"
+
+[[projects]]
   branch = "master"
   digest = "1:38f553aff0273ad6f367cb0a0f8b6eecbaef8dc6cb8b50e57b6a81c1d5b1e332"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
   revision = "057139ce5d2bdbe6fe73c53679e24e9cf007f637"
+
+[[projects]]
+  branch = "master"
+  digest = "1:1235bd185006c1bbdc4292ec1942974469ba1a37ab6bbb73850d75b2bd952efc"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom",
+  ]
+  pruneopts = "UT"
+  revision = "d26f9f9a57f3fab6a695bec0d84433c2c50f8bbf"
 
 [[projects]]
   branch = "master"
@@ -39,6 +66,11 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/sirupsen/logrus"]
+  input-imports = [
+    "github.com/nad2000/excelize",
+    "github.com/sirupsen/logrus",
+    "github.com/tealeg/xlsx",
+    "golang.org/x/net/html",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
