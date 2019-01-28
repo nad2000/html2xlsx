@@ -17,7 +17,7 @@ jobs:
     #### expecting it in the form of
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    working_directory: /go/src/github.com/{{CIRCLE_USERNAM}}/{{REPO_NAME}}
     steps:
       - checkout
       # - run: env
@@ -42,15 +42,15 @@ jobs:
           command: |
             extract-blocks tests/jan.zip
             gotest -v ./...
-      - run:
-          name: Publish on Github
-          # BB_AUTH_STRING=<bb_user_name>:<APP Password>
-          command: |
-            go get github.com/tcnksm/ghr
-            OUTPUT="${GOPATH}/bin/extract-blocks"
-            if [ "${CIRCLE_BRANCH}" != "master" ] ; then
-              OUTPUT="${OUTPUT}-${CIRCLE_BRANCH}"
-              mv "${GOPATH}/bin/extract-blocks" "${OUTPUT}"
-            fi
-            VERSION=$(html2xslx --version)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+      # - run:
+      #     name: Publish on Github
+      #     # BB_AUTH_STRING=<bb_user_name>:<APP Password>
+      #     command: |
+      #       go get github.com/tcnksm/ghr
+      #       OUTPUT="${GOPATH}/bin/extract-blocks"
+      #       if [ "${CIRCLE_BRANCH}" != "master" ] ; then
+      #         OUTPUT="${OUTPUT}-${CIRCLE_BRANCH}"
+      #         mv "${GOPATH}/bin/extract-blocks" "${OUTPUT}"
+      #       fi
+      #       VERSION=$(html2xslx --version)
+      #       ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
