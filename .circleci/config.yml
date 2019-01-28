@@ -45,13 +45,16 @@ jobs:
             html2xlsx tests/jan.zip test_output.zip
             gotest -v ./...
       - run:
+          name: Cross compile
+          command: |
+            mkdir build
+            for os in darwin windows ; do
+              GOOS=${os} go build -o build/html2xlsx.${os} ./html2xlsx
+              ./bin/upx --best --lzma  build/html2xlsx.${os}
+            done
+      - run:
           name: Publish on Github
           command: |
             go get github.com/tcnksm/ghr
-            OUTPUT="${GOPATH}/bin/html2xlsx"
-            if [ "${CIRCLE_BRANCH}" != "master" ] ; then
-              OUTPUT="${OUTPUT}-${CIRCLE_BRANCH}"
-              mv "${GOPATH}/bin/extract-blocks" "${OUTPUT}"
-            fi
             VERSION=$(html2xslx --version)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ${OUTPUT}
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build
