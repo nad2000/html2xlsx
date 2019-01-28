@@ -30,9 +30,6 @@ jobs:
       # - go get -v
       # - go build -v
       # - go build -v -o $(basename $PWD) main.go
-      - run: ls
-      - run: env
-      - run: pwd
       - run: go install ./html2xlsx
       - run: cd vendor/github.com/rakyll/gotest/; go install .
       - save_cache:
@@ -43,7 +40,7 @@ jobs:
       - run:
           name: Run all tests
           command: |
-            extract-blocks tests/jan.zip
+            html2xlsx tests/jan.zip
             gotest -v ./...
       # - run:
       #     name: Publish on Github
