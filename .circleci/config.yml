@@ -30,7 +30,7 @@ jobs:
       # - go get -v
       # - go build -v
       # - go build -v -o $(basename $PWD) main.go
-      - run: mkdir build; go install -o build/$(basename $PWD) ./html2xlsx
+      - run: mkdir build; go build -o build/$(basename $PWD) ./html2xlsx
       - run: cd vendor/github.com/rakyll/gotest/; go install .
       - save_cache:
           key: v1-pkg-cache
