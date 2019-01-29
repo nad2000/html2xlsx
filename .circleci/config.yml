@@ -30,19 +30,24 @@ jobs:
       # - go get -v
       # - go build -v
       # - go build -v -o $(basename $PWD) main.go
-      - run: mkdir build; go build -o build/$(basename $PWD) ./html2xlsx
       - run: cd vendor/github.com/rakyll/gotest/; go install .
       - save_cache:
           key: v1-pkg-cache
           paths:
             - "/go/pkg"
-      - run: ./bin/upx --best --lzma build/$(basename $PWD)
+      - run: 
+        command: |
+          mkdir build
+          go build -o build/$(basename $PWD) ./html2xlsx
+          ./bin/upx --best --lzma build/$(basename $PWD)
+          go install ./html2xlsx
+          ./bin/upx --best --lzma ${GOPATH}/bin/$(basename $PWD)
       - run:
           name: Run all tests
           command: |
-            build/html2xlsx --version
-            build/html2xlsx tests/jan.zip
-            build/html2xlsx tests/jan.zip test_output.zip
+            html2xlsx --version
+            html2xlsx tests/jan.zip
+            html2xlsx tests/jan.zip test_output.zip
             gotest -v ./...
       - run:
           name: Cross compile
