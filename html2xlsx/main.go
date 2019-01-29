@@ -13,15 +13,23 @@ import (
 // VERSION of the module...
 const VERSION = "0.1.1"
 
+func usage() {
+	log.Infoln("USAGE:\n\n" + os.Args[0] + " <INPUT FILENAME> [<OUTPUT FILENAME>]")
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Errorln("Missing input filename.")
-		log.Infoln("USAGE: " + os.Args[0] + " <INPUT FILENAME> [<OUTPUT FILENAME>]")
+		usage()
 		os.Exit(1)
 	}
 	filename := os.Args[1]
 	if strings.Contains(filename, "-version") || strings.Contains(filename, "-V") {
 		fmt.Println(VERSION)
+		return
+	}
+	if strings.Contains(filename, "-h") || strings.Contains(filename, "-?") {
+		usage()
 		return
 	}
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
