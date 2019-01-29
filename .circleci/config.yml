@@ -36,13 +36,14 @@ jobs:
           paths:
             - "/go/pkg"
       - run: 
+          name: Build for Linux and testing
           command: |
             mkdir build
             go build -o build/$(basename $PWD) ./html2xlsx
             ./bin/upx --best --lzma build/$(basename $PWD)
             go install ./html2xlsx
             ./bin/upx --best --lzma ${GOPATH}/bin/$(basename $PWD)
-        - run:
+      - run:
           name: Run all tests
           command: |
             html2xlsx --version
