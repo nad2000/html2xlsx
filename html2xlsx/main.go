@@ -11,7 +11,7 @@ import (
 )
 
 // VERSION of the module...
-const VERSION = "0.1.0"
+const VERSION = "0.1.1"
 
 func main() {
 	if len(os.Args) < 2 {
