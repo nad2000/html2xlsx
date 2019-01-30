@@ -40,7 +40,7 @@ jobs:
           command: |
             mkdir build
             go build -o build/$(basename $PWD).linux ./html2xlsx
-            ./bin/upx --best --lzma build/$(basename $PWD)
+            ./bin/upx --best --lzma build/$(basename $PWD).linux
             go install ./html2xlsx
             ./bin/upx --best --lzma ${GOPATH}/bin/$(basename $PWD)
       - run:
