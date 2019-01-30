@@ -53,14 +53,11 @@ jobs:
       - run:
           name: Cross compile
           command: |
-            ls build
-            ls 
             for os in darwin windows ; do
               GOOS=${os} go build -o build/html2xlsx.${os} ./html2xlsx
-              # ./bin/upx --best --lzma  build/html2xlsx.${os}
-              [ "$os" = "windows" ] && mv build/html2xlsx.${os} build/html2xlsx.exe
-              [ "$os" = "darwin" ] && mv build/html2xlsx.${os} build/html2xlsx
             done
+            mv build/html2xlsx.windows build/html2xlsx.exe
+            mv build/html2xlsx.darwin build/html2xlsx
       - run:
           name: Publish on Github
           command: |
