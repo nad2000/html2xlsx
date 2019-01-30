@@ -39,7 +39,7 @@ jobs:
           name: Build for Linux and testing
           command: |
             mkdir build
-            go build -o build/$(basename $PWD) ./html2xlsx
+            go build -o build/$(basename $PWD).linux ./html2xlsx
             ./bin/upx --best --lzma build/$(basename $PWD)
             go install ./html2xlsx
             ./bin/upx --best --lzma ${GOPATH}/bin/$(basename $PWD)
@@ -57,6 +57,7 @@ jobs:
               GOOS=${os} go build -o build/html2xlsx.${os} ./html2xlsx
               ./bin/upx --best --lzma  build/html2xlsx.${os}
               [ "$os" = "windows" ] && mv build/html2xlsx.${os} build/html2xlsx.exe
+              [ "$os" = "darwin" ] && mv build/html2xlsx.${os} build/html2xlsx
             done
       - run:
           name: Publish on Github
