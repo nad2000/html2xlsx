@@ -55,7 +55,7 @@ jobs:
           command: |
             for os in darwin windows ; do
               GOOS=${os} go build -o build/html2xlsx.${os} ./html2xlsx
-              ./bin/upx --best --lzma  build/html2xlsx.${os}
+              # ./bin/upx --best --lzma  build/html2xlsx.${os}
               [ "$os" = "windows" ] && mv build/html2xlsx.${os} build/html2xlsx.exe
               [ "$os" = "darwin" ] && mv build/html2xlsx.${os} build/html2xlsx
             done
