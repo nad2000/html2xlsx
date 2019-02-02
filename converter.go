@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -96,6 +97,8 @@ func convert(r io.Reader, file *excelize.File) {
 						} else {
 							setFloat(file, addr, value[:len(value)-1], 9)
 						}
+					} else if matched, err := regexp.MatchString("^[0-9,]+\\.?\\d*$", value); matched && err == nil {
+						setFloat(file, addr, value, 4)
 					} else {
 						file.SetCellValue(sheet, addr, value)
 					}
