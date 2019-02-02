@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/nad2000/excelize"
 	log "github.com/sirupsen/logrus"
@@ -14,9 +15,34 @@ import (
 	"golang.org/x/net/html"
 )
 
+const sheet = "Sheet1"
+
 // CellAddress maps a cell coordiantes (row, column) to its address
 func CellAddress(rowIndex, colIndex int) string {
 	return xlsx.GetCellIDStringFromCoords(colIndex, rowIndex)
+}
+
+func setStyle(file *excelize.File, addr string, format int) {
+	style, _ := file.NewStyle(`{"number_format": ` + strconv.Itoa(format) + `}`)
+	file.SetCellStyle(sheet, addr, addr, style)
+}
+func setFloat(file *excelize.File, addr, value string, format int) {
+	numValue := strings.Replace(value, ",", "", -1)
+
+	if floatVal, err := strconv.ParseFloat(numValue, 64); err == nil {
+		if format == 9 || format == 10 {
+			file.SetCellDefault(sheet, addr, strconv.FormatFloat(floatVal/100.0, 'f', -1, 64))
+		} else {
+			file.SetCellDefault(sheet, addr, numValue)
+		}
+		setStyle(file, addr, format)
+	} else {
+		file.SetCellValue(sheet, addr, value)
+	}
+}
+
+func timeValToExcelTimeVal(t time.Time) string {
+	return strconv.FormatFloat(float64(t.UnixNano())/8.64e13+25569.0, 'f', -1, 64)
 }
 
 func convert(r io.Reader, file *excelize.File) {
@@ -46,9 +72,33 @@ func convert(r io.Reader, file *excelize.File) {
 					}
 				}
 				// fmt.Printf("COLSPAN %d, VAL: %#v", colspan, c.FirstChild.Data)
-				addr := CellAddress(row, col)
 				if c.FirstChild.Data != "" {
-					file.SetCellValue("Sheet1", addr, c.FirstChild.Data)
+					addr := CellAddress(row, col)
+					value := c.FirstChild.Data
+					if intVal, err := strconv.ParseInt(value, 10, 64); err == nil {
+						file.SetCellValue(sheet, addr, intVal)
+					} else if strings.Contains(value, "/") {
+						timeVal, err := time.Parse("01/02/2006", value)
+						if err != nil {
+							log.WithError(err).Errorf("Failed to parse: %q", value)
+							file.SetCellValue(sheet, addr, value)
+
+						} else {
+							// need to reimplement for dates...
+							file.SetCellDefault(sheet, addr, timeValToExcelTimeVal(timeVal))
+							setStyle(file, addr, 14)
+						}
+					} else if strings.HasPrefix(value, "$") {
+						setFloat(file, addr, value[1:], 165)
+					} else if strings.HasSuffix(value, "%") {
+						if strings.Contains(value, ".") {
+							setFloat(file, addr, value[:len(value)-1], 10)
+						} else {
+							setFloat(file, addr, value[:len(value)-1], 9)
+						}
+					} else {
+						file.SetCellValue(sheet, addr, value)
+					}
 				}
 				col += colspan
 			}
@@ -97,13 +147,14 @@ func Convert(filename, outputFilename string) {
 		}
 		file := excelize.NewFile()
 		convert(rc, file)
-		of, err := writer.Create(strings.TrimSuffix(f.Name, filepath.Ext(f.Name)) + ".xlsx")
+		newName := strings.TrimSuffix(f.Name, filepath.Ext(f.Name)) + ".xlsx"
+		of, err := writer.Create(newName)
 		if err != nil {
 			log.WithError(err).Errorln("Failed to create a writer for a single file.")
 			continue
 		}
 		file.Write(of)
-		// file.SaveAs(strings.TrimSuffix(f.Name, filepath.Ext(f.Name)) + ".xlsx")
+		// file.SaveAs(newName)
 
 		rc.Close()
 	}
