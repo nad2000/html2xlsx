@@ -151,7 +151,15 @@ func Convert(filename, outputFilename string) {
 		file := excelize.NewFile()
 		convert(rc, file)
 		newName := strings.TrimSuffix(f.Name, filepath.Ext(f.Name)) + ".xlsx"
-		of, err := writer.Create(newName)
+		of, err := writer.CreateHeader(
+			&zip.FileHeader{
+				Name:         newName,
+				Method:       zip.Deflate,
+				Modified:     f.Modified,
+				ModifiedTime: f.ModifiedTime,
+				ModifiedDate: f.ModifiedDate,
+			})
+
 		if err != nil {
 			log.WithError(err).Errorln("Failed to create a writer for a single file.")
 			continue
