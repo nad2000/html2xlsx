@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       # specify the version
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.11
     # environment:
     #   PACKAGE_PATH: ${GOPATH}/src/extract-blocks
     #   # Specify service dependencies here if necessary
