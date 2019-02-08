@@ -18,6 +18,11 @@ import (
 
 const sheet = "Sheet1"
 
+var (
+	dateRE  = regexp.MustCompile(`^\d\d?/\d\d?/\d{2,4}$`)
+	floatRE = regexp.MustCompile(`^[0-9,]+\.?\d*$`)
+)
+
 // CellAddress maps a cell coordiantes (row, column) to its address
 func CellAddress(rowIndex, colIndex int) string {
 	return xlsx.GetCellIDStringFromCoords(colIndex, rowIndex)
@@ -78,12 +83,11 @@ func convert(r io.Reader, file *excelize.File) {
 					value := c.FirstChild.Data
 					if intVal, err := strconv.ParseInt(value, 10, 64); err == nil {
 						file.SetCellValue(sheet, addr, intVal)
-					} else if strings.Contains(value, "/") {
+					} else if matched := dateRE.MatchString(value); matched && err == nil {
 						timeVal, err := time.Parse("01/02/2006", value)
 						if err != nil {
 							log.WithError(err).Errorf("Failed to parse: %q", value)
 							file.SetCellValue(sheet, addr, value)
-
 						} else {
 							// need to reimplement for dates...
 							file.SetCellDefault(sheet, addr, timeValToExcelTimeVal(timeVal))
@@ -97,7 +101,7 @@ func convert(r io.Reader, file *excelize.File) {
 						} else {
 							setFloat(file, addr, value[:len(value)-1], 9)
 						}
-					} else if matched, err := regexp.MatchString("^[0-9,]+\\.?\\d*$", value); matched && err == nil {
+					} else if matched := floatRE.MatchString(value); matched && err == nil {
 						setFloat(file, addr, value, 4)
 					} else {
 						file.SetCellValue(sheet, addr, value)
