@@ -11,7 +11,7 @@ import (
 )
 
 // VERSION of the module...
-const VERSION = "0.2.2"
+const VERSION = "0.2.3"
 
 func usage() {
 	log.Infoln("USAGE:\n\n" + os.Args[0] + " <INPUT FILENAME> [<OUTPUT FILENAME>]")
